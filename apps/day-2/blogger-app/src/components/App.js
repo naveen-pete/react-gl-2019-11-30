@@ -4,7 +4,7 @@ import Header from './Header';
 import Posts from './Posts';
 
 const App = () => {
-  return <div>
+  return <div className="container">
     <Header />
     <Posts />
   </div>;
