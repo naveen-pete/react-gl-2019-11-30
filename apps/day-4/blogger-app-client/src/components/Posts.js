@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 import Categories from './Categories';
+import { getPosts } from '../api/PostsApi';
 
-import { posts, categoryAll } from './store';
+import { categoryAll } from './store';
 
 class Posts extends Component {
 
@@ -11,9 +12,18 @@ class Posts extends Component {
     super();
 
     this.state = {
-      posts: posts,
+      posts: [],
       selectedCategory: categoryAll
     };
+  }
+
+  componentDidMount() {
+    getPosts()
+      .then(posts => this.setState({ posts: posts }))
+      .catch(error => {
+        console.log('Get posts failed.');
+        console.log('Error:', error);
+      });
   }
 
   handleCategorySelect = category => {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
-import { categories, posts } from './store';
+import { createPost, updatePost, getPost } from '../api/PostsApi';
+import { getCategories } from '../api/CategoriesApi';
 
 class PostForm extends Component {
 
@@ -9,10 +10,13 @@ class PostForm extends Component {
     title: '',
     body: '',
     author: '',
-    category: ''
+    category: '',
+
+    categories: []
   };
 
   componentDidMount() {
+    this.getCategories();
     this.getPost();
     console.log('PostForm component mounted.');
   }
@@ -21,21 +25,67 @@ class PostForm extends Component {
     console.log('PostForm component got destroyed.');
   }
 
-  getPost = () => {
-    const id = this.props.match.params.id;
-
-    const post = posts.find(p => p.id === parseInt(id));
-    if (!post) {
-      return;
+  getCategories = async () => {
+    try {
+      const categories = await getCategories();
+      this.setState({ categories });
+    } catch (error) {
+      console.log('Get categories failed.');
+      console.log('Error:', error);
     }
+  }
 
-    this.setState({
-      id: post.id,
-      title: post.title,
-      body: post.body,
-      author: post.author,
-      category: post.category
-    });
+  getPost = async () => {
+    try {
+      const id = this.props.match.params.id;
+      if (!id) {
+        return;
+      }
+
+      const post = await getPost(id);
+
+      this.setState({
+        id: post.id,
+        title: post.title,
+        body: post.body,
+        author: post.author,
+        category: post.category
+      });
+
+    } catch (error) {
+      console.log('Get post failed.');
+      console.log('Error:', error);
+    }
+  }
+
+  createPost = async () => {
+    try {
+      const newPost = {
+        title: this.state.title,
+        body: this.state.body,
+        author: this.state.author,
+        category: this.state.category
+      };
+
+      await createPost(newPost);
+
+      this.props.history.push('/posts');
+    } catch (error) {
+      console.log('Create post failed!');
+      console.log('Error:', error);
+    }
+  }
+
+  updatePost = async () => {
+    try {
+      const post = { ...this.state };
+      await updatePost(this.state.id, post);
+
+      this.props.history.push('/posts');
+    } catch (error) {
+      console.log('Update post failed!');
+      console.log('Error:', error);
+    }
   }
 
   handleSubmit = e => {
@@ -45,23 +95,12 @@ class PostForm extends Component {
 
     if (id === 0) {
       // Create new post
-      const newPost = { ...this.state, id: Date.now() };
-      posts.push(newPost);
+      this.createPost();
     } else {
       // Update existing post
-      const post = posts.find(p => p.id === id);
-
-      if (post) {
-        post.title = this.state.title;
-        post.body = this.state.body;
-        post.author = this.state.author;
-        post.category = this.state.category;
-      } else {
-        console.log(`No post found for id: ${this.state.id}`);
-      }
+      this.updatePost();
     }
 
-    this.props.history.push('/posts');
   }
 
   handleChange = e => {
@@ -70,7 +109,7 @@ class PostForm extends Component {
   }
 
   render() {
-    const { title, body, author, category } = this.state;
+    const { title, body, author, category, categories } = this.state;
 
     return <div>
       <h5>Post Form</h5>
