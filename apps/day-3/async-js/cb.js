@@ -1,6 +1,10 @@
 const getUser = (userName, cb) => {
+  console.log('getUser() - begin');
   setTimeout(() => {
     const user = users.find(u => u.name === userName);
+
+    console.log('getUser() - end');
+
     if (!user) {
       cb('User not found');
       return;
@@ -10,8 +14,11 @@ const getUser = (userName, cb) => {
 };
 
 const getPosts = (userId, cb) => {
+  console.log('getPosts() - begin');
   setTimeout(() => {
     const postsForUser = posts.filter(p => p.userId === userId);
+
+    console.log('getPosts() - end');
 
     if (postsForUser.length <= 0) {
       cb('Posts not found');
@@ -42,4 +49,3 @@ getUser('hari', (error, result) => {
 });
 
 console.log('end');
-

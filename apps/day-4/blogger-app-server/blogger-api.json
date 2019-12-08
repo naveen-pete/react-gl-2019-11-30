@@ -2,13 +2,20 @@
   "posts": [
     {
       "id": 1,
+      "title": "React Overview",
+      "body": "Provides an overview of React",
+      "author": "Ram",
+      "category": "react"
+    },
+    {
+      "id": 2,
       "title": "Redux Principles",
       "body": "Redux can be described in three fundamental principles: (a) Single source of truth (b) State is read-only (c) Changes are made with pure functions",
       "author": "facebook",
       "category": "redux"
     },
     {
-      "id": 2,
+      "id": 3,
       "title": "Angular",
       "body": "One framework. Mobile & desktop.",
       "author": "google",
