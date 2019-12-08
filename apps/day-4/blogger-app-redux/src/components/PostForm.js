@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import { createPost, updatePost, getPost } from '../api/PostsApi';
+import { updatePost, getPost } from '../api/PostsApi';
 import { getCategories } from '../api/CategoriesApi';
+import * as PostActions from '../actions/PostActions';
 
 class PostForm extends Component {
 
@@ -67,7 +69,8 @@ class PostForm extends Component {
         category: this.state.category
       };
 
-      await createPost(newPost);
+      // dispatch create post action
+      this.props.createPost(newPost);
 
       this.props.history.push('/posts');
     } catch (error) {
@@ -184,4 +187,10 @@ class PostForm extends Component {
 
 }
 
-export default PostForm;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    createPost: (post) => dispatch(PostActions.createPost(post))
+  }
+};
+
+export default connect(null, mapDispatchToProps)(PostForm);

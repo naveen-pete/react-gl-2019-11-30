@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { categoryAll } from './store';
 import { getCategories } from '../api/CategoriesApi';
+import { selectCategory } from '../actions/CategoryActions';
 
 class Categories extends Component {
   state = {
@@ -29,7 +31,7 @@ class Categories extends Component {
             type="button"
             key={c.id}
             className="list-group-item list-group-item-action"
-            onClick={() => this.props.onCategorySelect(c)}
+            onClick={() => this.props.selectCategory(c)}
           >{c.name}</button>
         )}
       </div>
@@ -37,4 +39,10 @@ class Categories extends Component {
   }
 }
 
-export default Categories;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    selectCategory: (category) => dispatch(selectCategory(category))
+  };
+}
+
+export default connect(null, mapDispatchToProps)(Categories);

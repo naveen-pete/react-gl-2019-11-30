@@ -1,33 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Categories from './Categories';
-import { getPosts } from '../api/PostsApi';
-
-import { categoryAll } from './store';
+import * as PostActions from '../actions/PostActions';
 
 class Posts extends Component {
 
-  constructor() {
-    super();
-
-    this.state = {
-      posts: [],
-      selectedCategory: categoryAll
-    };
-  }
-
   componentDidMount() {
-    getPosts()
-      .then(posts => this.setState({ posts: posts }))
-      .catch(error => {
-        console.log('Get posts failed.');
-        console.log('Error:', error);
-      });
-  }
-
-  handleCategorySelect = category => {
-    this.setState({ selectedCategory: category });
+    this.props.getPosts();
   }
 
   handleDeletePost = postId => {
@@ -68,14 +49,14 @@ class Posts extends Component {
   }
 
   render() {
-    const { posts, selectedCategory } = this.state;
+    const { posts, selectedCategory } = this.props;
 
     const filteredPosts = selectedCategory.id === 'all' ?
       posts : posts.filter(p => p.category === selectedCategory.id);
 
     return <div className="row">
       <div className="col-md-3">
-        <Categories onCategorySelect={this.handleCategorySelect} />
+        <Categories />
       </div>
       <div className="col-md-9">
         <h5>Posts (Category: {selectedCategory.name})</h5>
@@ -90,4 +71,17 @@ class Posts extends Component {
 
 }
 
-export default Posts;
+const mapStateToProps = (state) => {
+  return {
+    posts: state.posts,
+    selectedCategory: state.selectedCategory
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getPosts: () => dispatch(PostActions.getPosts())
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Posts);
